@@ -1,0 +1,107 @@
+{
+    "class_9": {
+      "science": {
+        "Matter in Our Surroundings": {
+          "easy": [
+            {
+              "question": "Which state of matter has a definite shape and volume?",
+              "options": ["Solid", "Liquid", "Gas", "Plasma"],
+              "answer": "Solid",
+              "subject": "Science",
+              "chapter": "Matter in Our Surroundings",
+              "difficulty": "easy"
+            }
+          ],
+          "medium": [
+            {
+              "question": "What is the process of conversion of a solid directly into gas called?",
+              "options": ["Evaporation", "Condensation", "Sublimation", "Melting"],
+              "answer": "Sublimation",
+              "subject": "Science",
+              "chapter": "Matter in Our Surroundings",
+              "difficulty": "medium"
+            }
+          ],
+          "hard": [
+            {
+              "question": "At what temperature does water boil at sea level?",
+              "options": ["90°C", "95°C", "100°C", "105°C"],
+              "answer": "100°C",
+              "subject": "Science",
+              "chapter": "Matter in Our Surroundings",
+              "difficulty": "hard"
+            }
+          ]
+        }
+      },
+      "maths": {
+        "Number Systems": {
+          "easy": [
+            {
+              "question": "Which of the following is an irrational number?",
+              "options": ["2", "4", "√2", "1"],
+              "answer": "√2",
+              "subject": "Mathematics",
+              "chapter": "Number Systems",
+              "difficulty": "easy"
+            }
+          ],
+          "medium": [
+            {
+              "question": "What is the value of π (pi) up to two decimal places?",
+              "options": ["3.14", "3.15", "3.16", "3.17"],
+              "answer": "3.14",
+              "subject": "Mathematics",
+              "chapter": "Number Systems",
+              "difficulty": "medium"
+            }
+          ],
+          "hard": [
+            {
+              "question": "Simplify: (√2 + √3)²",
+              "options": ["5 + 2√6", "5 + √6", "5 + 2√3", "5 + 2√2"],
+              "answer": "5 + 2√6",
+              "subject": "Mathematics",
+              "chapter": "Number Systems",
+              "difficulty": "hard"
+            }
+          ]
+        }
+      },
+      "social_science": {
+        "The French Revolution": {
+          "easy": [
+            {
+              "question": "In which year did the French Revolution begin?",
+              "options": ["1789", "1776", "1804", "1799"],
+              "answer": "1789",
+              "subject": "Social Science",
+              "chapter": "The French Revolution",
+              "difficulty": "easy"
+            }
+          ],
+          "medium": [
+            {
+              "question": "Who was the king of France at the time of the French Revolution?",
+              "options": ["Louis XIV", "Louis XV", "Louis XVI", "Louis XVII"],
+              "answer": "Louis XVI",
+              "subject": "Social Science",
+              "chapter": "The French Revolution",
+              "difficulty": "medium"
+            }
+          ],
+          "hard": [
+            {
+              "question": "What was the name of the prison stormed by revolutionaries on July 14, 1789?",
+              "options": ["Versailles", "Bastille", "Tuileries", "Louvre"],
+              "answer": "Bastille",
+              "subject": "Social Science",
+              "chapter": "The French Revolution",
+              "difficulty": "hard"
+            }
+          ]
+        }
+      }
+    }
+  }
+  

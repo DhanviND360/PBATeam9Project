@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Paratpar AI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-body">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="https://via.placeholder.com/50" alt="User" class="user-avatar">
+            <div class="user-info">
+                <h3 id="sidebar-username">Guest User</h3>
+                <p>Student</p>
+            </div>
+            <button class="close-sidebar" id="close-sidebar">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li class="active">
+                    <a href="home.html">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="courses.html">
+                        <i class="fas fa-book"></i>
+                        <span>My Courses</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="assignments.html">
+                        <i class="fas fa-tasks"></i>
+                        <span>Assignments</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="timetable.html">
+                        <i class="fas fa-calendar"></i>
+                        <span>Timetable</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="rewards.html">
+                        <i class="fas fa-gift"></i>
+                        <span>Reward Mart</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="settings.html">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.html">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dashboard-content">
+        <!-- Top Navigation -->
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <button class="hamburger-btn" id="hamburger-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2>Dashboard</h2>
+            </div>
+            <div class="nav-right">
+                <div class="token-widget" id="token-widget">
+                    <i class="fas fa-coins"></i>
+                    <span id="token-count">120</span>
+                    <div class="token-tooltip">
+                        Click to visit Reward Mart
+                    </div>
+                </div>
+                <div class="profile-dropdown">
+                    <button class="profile-btn" id="profile-btn">
+                        <img src="https://via.placeholder.com/40" alt="Profile">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="profile-dropdown">
+                        <ul>
+                            <li><a href="settings.html#profile"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+                            <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Sections -->
+        <div class="dashboard-grid">
+            <!-- Progress Overview -->
+            <section class="dashboard-card progress-overview">
+                <h3>Your Progress</h3>
+                <div class="progress-container">
+                    <div class="progress-item">
+                        <div class="progress-info">
+                            <span>Overall Completion</span>
+                            <span>65%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-info">
+                            <span>Mathematics</span>
+                            <span>78%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 78%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-info">
+                            <span>Science</span>
+                            <span>52%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 52%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-info">
+                            <span>Social Studies</span>
+                            <span>45%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 45%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-info">
+                            <span>English</span>
+                            <span>89%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 89%"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Today's Timetable -->
+            <section class="dashboard-card timetable-card">
+                <h3>Today's Timetable</h3>
+                <div class="timetable-container">
+                    <div class="date-display">
+                        <i class="fas fa-calendar-day"></i>
+                        <span id="current-date">Loading date...</span>
+                    </div>
+                    <div class="timetable-schedule">
+                        <div class="schedule-item active">
+                            <div class="time">08:30 - 09:30</div>
+                            <div class="class-info">
+                                <h4>Mathematics</h4>
+                                <p>Algebra Fundamentals</p>
+                            </div>
+                            <div class="class-status">
+                                <span class="status-badge in-progress">In Progress</span>
+                            </div>
+                        </div>
+                        <div class="schedule-item">
+                            <div class="time">09:45 - 10:45</div>
+                            <div class="class-info">
+                                <h4>Science</h4>
+                                <p>Chemistry Lab</p>
+                            </div>
+                            <div class="class-status">
+                                <span class="status-badge upcoming">Upcoming</span>
+                            </div>
+                        </div>
+                        <div class="schedule-item">
+                            <div class="time">11:00 - 12:00</div>
+                            <div class="class-info">
+                                <h4>English</h4>
+                                <p>Creative Writing</p>
+                            </div>
+                            <div class="class-status">
+                                <span class="status-badge upcoming">Upcoming</span>
+                            </div>
+                        </div>
+                        <div class="schedule-item">
+                            <div class="time">13:00 - 14:00</div>
+                            <div class="class-info">
+                                <h4>Social Studies</h4>
+                                <p>History: World War II</p>
+                            </div>
+                            <div class="class-status">
+                                <span class="status-badge upcoming">Upcoming</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Learning Plan -->
+            <section class="dashboard-card learning-plan">
+                <h3>Your Learning Plan</h3>
+                <div class="plan-container">
+                    <div class="plan-header">
+                        <div class="plan-title">
+                            <h4>Personalized Study Plan</h4>
+                            <p>Based on your assessment results</p>
+                        </div>
+                        <button class="refresh-plan">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div class="plan-content">
+                        <div class="plan-item">
+                            <div class="plan-subject">
+                                <i class="fas fa-calculator"></i>
+                                <span>Mathematics</span>
+                            </div>
+                            <div class="plan-recommendations">
+                                <h5>Focus Areas:</h5>
+                                <ul>
+                                    <li>Number Systems</li>
+                                    <li>Square Roots</li>
+                                </ul>
+                                <div class="plan-action">
+                                    <a href="#math-resources" class="plan-btn">View Resources</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="plan-item">
+                            <div class="plan-subject">
+                                <i class="fas fa-flask"></i>
+                                <span>Science</span>
+                            </div>
+                            <div class="plan-recommendations">
+                                <h5>Focus Areas:</h5>
+                                <ul>
+                                    <li>Matter in Our Surroundings</li>
+                                    <li>Solar System</li>
+                                </ul>
+                                <div class="plan-action">
+                                    <a href="#science-resources" class="plan-btn">View Resources</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="plan-item">
+                            <div class="plan-subject">
+                                <i class="fas fa-book"></i>
+                                <span>Social Studies</span>
+                            </div>
+                            <div class="plan-recommendations">
+                                <h5>Focus Areas:</h5>
+                                <ul>
+                                    <li>The French Revolution</li>
+                                </ul>
+                                <div class="plan-action">
+                                    <a href="#social-resources" class="plan-btn">View Resources</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity -->
+            <section class="dashboard-card recent-activity">
+                <h3>Recent Activity</h3>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="activity-details">
+                            <h4>Completed Assessment</h4>
+                            <p>Entrance Exam - Score: 78%</p>
+                            <span class="activity-time">2 hours ago</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div class="activity-details">
+                            <h4>Watched Video Lesson</h4>
+                            <p>Mathematics: Quadratic Equations</p>
+                            <span class="activity-time">Yesterday</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="activity-details">
+                            <h4>Submitted Assignment</h4>
+                            <p>Science: Periodic Table Quiz</p>
+                            <span class="activity-time">2 days ago</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <div class="activity-details">
+                            <h4>Earned Achievement</h4>
+                            <p>"Science Whiz" - Complete 5 science quizzes</p>
+                            <span class="activity-time">3 days ago</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Profile Settings Modal -->
+    <div class="modal" id="profile-settings-modal">
+        <div class="modal-content profile-settings-content">
+            <span class="close-modal">&times;</span>
+            <h2>Account Settings</h2>
+            <div class="settings-container">
+                <div class="settings-sidebar">
+                    <ul>
+                        <li class="active" data-tab="personal-info">Personal Information</li>
+                        <li data-tab="account-settings">Account Settings</li>
+                        <li data-tab="notification-settings">Notifications</li>
+                        <li data-tab="privacy-settings">Privacy</li>
+                    </ul>
+                </div>
+                <div class="settings-content">
+                    <div class="settings-tab active" id="personal-info">
+                        <h3>Personal Information</h3>
+                        <form id="personal-info-form">
+                            <div class="form-group">
+                                <label for="full-name">Full Name</label>
+                                <input type="text" id="full-name" value="John Doe">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" value="john.doe@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" value="+1 (555) 123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label for="date-of-birth">Date of Birth</label>
+                                <input type="date" id="date-of-birth" value="2005-05-15">
+                            </div>
+                            <div class="form-group">
+                                <label for="class">Current Class</label>
+                                <select id="class">
+                                    <option value="class_9" selected>Class 9</option>
+                                    <option value="class_10">Class 10</option>
+                                    <option value="class_11">Class 11</option>
+                                    <option value="class_12">Class 12</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="cta-button">Save Changes</button>
+                        </form>
+                    </div>
+                    <div class="settings-tab" id="account-settings">
+                        <h3>Account Settings</h3>
+                        <form id="account-settings-form">
+                            <div class="form-group">
+                                <label for="password">Current Password</label>
+                                <input type="password" id="password">
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password">New Password</label>
+                                <input type="password" id="new-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password">Confirm New Password</label>
+                                <input type="password" id="confirm-password">
+                            </div>
+                            <button type="submit" class="cta-button">Change Password</button>
+                        </form>
+                    </div>
+                    <div class="settings-tab" id="notification-settings">
+                        <h3>Notification Settings</h3>
+                        <div class="notification-settings">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Email Notifications</h4>
+                                    <p>Receive email notifications for important updates</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Assignment Reminders</h4>
+                                    <p>Get notified when assignments are due</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Class Schedule Alerts</h4>
+                                    <p>Receive alerts for upcoming classes</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>New Features</h4>
+                                    <p>Be the first to know about new features</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="settings-tab" id="privacy-settings">
+                        <h3>Privacy Settings</h3>
+                        <div class="privacy-settings">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Profile Visibility</h4>
+                                    <p>Allow other students to see your profile</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Show Progress</h4>
+                                    <p>Display your progress to other students</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>Data Usage</h4>
+                                    <p>Allow us to use your data to improve your experience</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add logout functionality to logout links
+            const logoutLinks = document.querySelectorAll('a[href="index.html"]');
+            logoutLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Clear user data from localStorage
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('userTokens');
+                    // Redirect to index.html
+                    window.location.href = 'index.html';
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

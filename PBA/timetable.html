@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timetable - Paratpar AI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .timetable-container {
+            padding: 20px;
+        }
+        
+        .timetable-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .week-selection {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .week-nav {
+            background: #f0f0f0;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .week-nav:hover {
+            background: #e0e0e0;
+        }
+        
+        .current-week {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .timetable-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .add-event-btn, 
+        .print-btn {
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+        
+        .add-event-btn {
+            background: var(--gradient-yellow);
+            border: none;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+        
+        .print-btn {
+            background: #f0f0f0;
+            border: none;
+            color: var(--text-color);
+        }
+        
+        .add-event-btn:hover, 
+        .print-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .timetable-grid {
+            display: grid;
+            grid-template-columns: 100px repeat(7, 1fr);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .timetable-header-row {
+            display: contents;
+        }
+        
+        .time-col,
+        .day-col {
+            padding: 15px;
+            background: var(--gradient-yellow);
+            text-align: center;
+            font-weight: 600;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .day-col {
+            padding: 15px 10px;
+        }
+        
+        .day-name {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .day-date {
+            display: block;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .timetable-row {
+            display: contents;
+        }
+        
+        .time-cell {
+            padding: 15px 10px;
+            text-align: center;
+            background: #f9f9f9;
+            border-right: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+        
+        .schedule-cell {
+            padding: 10px;
+            background: white;
+            border-right: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .schedule-cell:hover {
+            background: #f9f9f9;
+        }
+        
+        .class-item {
+            padding: 10px;
+            background: rgba(255, 215, 0, 0.1);
+            border-left: 3px solid var(--primary-color);
+            border-radius: 3px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .class-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        }
+        
+        .class-item h4 {
+            margin: 0 0 5px 0;
+            font-size: 0.9rem;
+        }
+        
+        .class-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--light-text);
+        }
+        
+        .class-teacher {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .class-type {
+            background: rgba(0,0,0,0.05);
+            padding: 3px 6px;
+            border-radius: 3px;
+        }
+        
+        .today-col {
+            background: rgba(255, 215, 0, 0.05);
+        }
+        
+        .current-time-marker {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ff6b6b;
+            z-index: 5;
+        }
+        
+        .current-time-marker::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: -4px;
+            width: 10px;
+            height: 10px;
+            background: #ff6b6b;
+            border-radius: 50%;
+        }
+        
+        /* Subject Colors */
+        .subject-math {
+            background: rgba(52, 152, 219, 0.1);
+            border-left-color: #3498db;
+        }
+        
+        .subject-physics {
+            background: rgba(142, 68, 173, 0.1);
+            border-left-color: #8e44ad;
+        }
+        
+        .subject-chemistry {
+            background: rgba(231, 76, 60, 0.1);
+            border-left-color: #e74c3c;
+        }
+        
+        .subject-biology {
+            background: rgba(46, 204, 113, 0.1);
+            border-left-color: #2ecc71;
+        }
+        
+        .subject-english {
+            background: rgba(241, 196, 15, 0.1);
+            border-left-color: #f1c40f;
+        }
+        
+        .subject-history {
+            background: rgba(230, 126, 34, 0.1);
+            border-left-color: #e67e22;
+        }
+        
+        .subject-geography {
+            background: rgba(52, 73, 94, 0.1);
+            border-left-color: #34495e;
+        }
+        
+        .timetable-legend {
+            margin-top: 30px;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+        }
+        
+        .legend-title {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        
+        .legend-text {
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 992px) {
+            .timetable-grid {
+                grid-template-columns: 80px repeat(7, 1fr);
+                font-size: 0.9rem;
+            }
+            
+            .class-item h4 {
+                font-size: 0.8rem;
+            }
+            
+            .class-info {
+                font-size: 0.7rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .timetable-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .timetable-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .timetable-grid {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .timetable-grid-inner {
+                display: grid;
+                grid-template-columns: 80px repeat(7, 150px);
+                min-width: 1000px;
+            }
+            
+            .timetable-header-row,
+            .timetable-row {
+                display: contents;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="https://via.placeholder.com/50" alt="User" class="user-avatar">
+            <div class="user-info">
+                <h3 id="sidebar-username">Guest User</h3>
+                <p>Student</p>
+            </div>
+            <button class="close-sidebar" id="close-sidebar">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li>
+                    <a href="home.html">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="courses.html">
+                        <i class="fas fa-book"></i>
+                        <span>My Courses</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="assignments.html">
+                        <i class="fas fa-tasks"></i>
+                        <span>Assignments</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="timetable.html">
+                        <i class="fas fa-calendar"></i>
+                        <span>Timetable</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="rewards.html">
+                        <i class="fas fa-gift"></i>
+                        <span>Reward Mart</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="settings.html">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.html">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dashboard-content">
+        <!-- Top Navigation -->
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <button class="hamburger-btn" id="hamburger-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2>Timetable</h2>
+            </div>
+            <div class="nav-right">
+                <div class="token-widget" id="token-widget">
+                    <i class="fas fa-coins"></i>
+                    <span id="token-count">120</span>
+                    <div class="token-tooltip">
+                        Click to visit Reward Mart
+                    </div>
+                </div>
+                <div class="profile-dropdown">
+                    <button class="profile-btn" id="profile-btn">
+                        <img src="https://via.placeholder.com/40" alt="Profile">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="profile-dropdown">
+                        <ul>
+                            <li><a href="settings.html#profile"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+                            <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Timetable Container -->
+        <div class="timetable-container">
+            <!-- Header -->
+            <div class="timetable-header">
+                <div class="week-selection">
+                    <button class="week-nav" id="prev-week"><i class="fas fa-chevron-left"></i></button>
+                    <div class="current-week">May 15 - May 21, 2023</div>
+                    <button class="week-nav" id="next-week"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                
+                <div class="timetable-actions">
+                    <button class="add-event-btn">
+                        <i class="fas fa-plus"></i>
+                        <span>Add Event</span>
+                    </button>
+                    <button class="print-btn">
+                        <i class="fas fa-print"></i>
+                        <span>Print</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Timetable Grid -->
+            <div class="timetable-grid">
+                <div class="timetable-grid-inner">
+                    <div class="timetable-header-row">
+                        <div class="time-col"></div>
+                        <div class="day-col">
+                            <span class="day-name">Mon</span>
+                            <span class="day-date">15 May</span>
+                        </div>
+                        <div class="day-col">
+                            <span class="day-name">Tue</span>
+                            <span class="day-date">16 May</span>
+                        </div>
+                        <div class="day-col today-col">
+                            <span class="day-name">Wed</span>
+                            <span class="day-date">17 May</span>
+                        </div>
+                        <div class="day-col">
+                            <span class="day-name">Thu</span>
+                            <span class="day-date">18 May</span>
+                        </div>
+                        <div class="day-col">
+                            <span class="day-name">Fri</span>
+                            <span class="day-date">19 May</span>
+                        </div>
+                        <div class="day-col">
+                            <span class="day-name">Sat</span>
+                            <span class="day-date">20 May</span>
+                        </div>
+                        <div class="day-col">
+                            <span class="day-name">Sun</span>
+                            <span class="day-date">21 May</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 8:00 - 9:00 -->
+                    <div class="timetable-row">
+                        <div class="time-cell">8:00 - 9:00</div>
+                        
+                        <div class="schedule-cell">
+                            <div class="class-item subject-math">
+                                <h4>Mathematics</h4>
+                                <div class="class-info">
+                                    <div class="class-teacher">
+                                        <i class="fas fa-user"></i>
+                                        <span>Ms. Garcia</span>
+                                    </div>
+                                    <div class="class-type">Lecture</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-cell">
+                            <div class="class-item subject-physics">
+                                <h4>Physics</h4>
+                                <div class="class-info">
+                                    <div class="class-teacher">
+                                        <i class="fas fa-user"></i>
+                                        <span>Mr. Johnson</span>
+                                    </div>
+                                    <div class="class-type">Lab</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-cell today-col">
+                            <div class="class-item subject-english">
+                                <h4>English</h4>
+                                <div class="class-info">
+                                    <div class="class-teacher">
+                                        <i class="fas fa-user"></i>
+                                        <span>Mrs. Williams</span>
+                                    </div>
+                                    <div class="class-type">Lecture</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-cell">
+                            <div class="class-item subject-chemistry">
+                                <h4>Chemistry</h4>
+                                <div class="class-info">
+                                    <div class="class-teacher">
+                                        <i class="fas fa-user"></i>
+                                        <span>Dr. Miller</span>
+                                    </div>
+                                    <div class="class-type">Theory</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-cell">
+                            <div class="class-item subject-history">
+                                <h4>History</h4>
+                                <div class="class-info">
+                                    <div class="class-teacher">
+                                        <i class="fas fa-user"></i>
+                                        <span>Mr. Brown</span>
+                                    </div>
+                                    <div class="class-type">Lecture</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                    </div>
+                    
+                    <!-- 9:00 - 10:00 -->
+                    <div class="timetable-row">
+                        <div class="time-cell">9:00 - 10:00</div>
+                        
+                        <div class="schedule-cell">
+                            <div class="class-item subject-english">
+                                <h4>English</h4>
+                                <div class="class-info">
+                                    <div class="class-teacher">
+                                        <i class="fas fa-user"></i>
+                                        <span>Mrs. Williams</span>
+                                    </div>
+                                    <div class="class-type">Lecture</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-cell">
+                            <div class="class-item subject-physics">
+                                <h4>Physics</h4>
+                                <div class="class-info">
+                                    <div class="class-teacher">
+                                        <i class="fas fa-user"></i>
+                                        <span>Mr. Johnson</span>
+                                    </div>
+                                    <div class="class-type">Lab</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-cell today-col">
+                            <div class="class-item subject-math">
+                                <h4>Mathematics</h4>
+                                <div class="class-info">
+                                    <div class="class-teacher">
+                                        <i class="fas fa-user"></i>
+                                        <span>Ms. Garcia</span>
+                                    </div>
+                                    <div class="class-type">Tutorial</div>
+                                </div>
+                            </div>
+                            <div class="current-time-marker" style="top: 30%"></div>
+                        </div>
+                        
+                        <div class="schedule-cell">
+                            <div class="class-item subject-chemistry">
+                                <h4>Chemistry</h4>
+                                <div class="class-info">
+                                    <div class="class-teacher">
+                                        <i class="fas fa-user"></i>
+                                        <span>Dr. Miller</span>
+                                    </div>
+                                    <div class="class-type">Lab</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-cell">
+                            <div class="class-item subject-geography">
+                                <h4>Geography</h4>
+                                <div class="class-info">
+                                    <div class="class-teacher">
+                                        <i class="fas fa-user"></i>
+                                        <span>Mrs. Davis</span>
+                                    </div>
+                                    <div class="class-type">Lecture</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                    </div>
+                    
+                    <!-- Add more time slots here -->
+                    <!-- 10:00 - 11:00 -->
+                    <div class="timetable-row">
+                        <div class="time-cell">10:00 - 11:00</div>
+                        <div class="schedule-cell">
+                            <div class="class-item subject-history">
+                                <h4>History</h4>
+                                <div class="class-info">
+                                    <div class="class-teacher">
+                                        <i class="fas fa-user"></i>
+                                        <span>Mr. Brown</span>
+                                    </div>
+                                    <div class="class-type">Lecture</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="schedule-cell">
+                            <div class="class-item subject-math">
+                                <h4>Mathematics</h4>
+                                <div class="class-info">
+                                    <div class="class-teacher">
+                                        <i class="fas fa-user"></i>
+                                        <span>Ms. Garcia</span>
+                                    </div>
+                                    <div class="class-type">Lecture</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="schedule-cell today-col"></div>
+                        <div class="schedule-cell">
+                            <div class="class-item subject-biology">
+                                <h4>Biology</h4>
+                                <div class="class-info">
+                                    <div class="class-teacher">
+                                        <i class="fas fa-user"></i>
+                                        <span>Dr. Wilson</span>
+                                    </div>
+                                    <div class="class-type">Lecture</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="schedule-cell">
+                            <div class="class-item subject-english">
+                                <h4>English</h4>
+                                <div class="class-info">
+                                    <div class="class-teacher">
+                                        <i class="fas fa-user"></i>
+                                        <span>Mrs. Williams</span>
+                                    </div>
+                                    <div class="class-type">Lecture</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Timetable Legend -->
+            <div class="timetable-legend">
+                <h3 class="legend-title">Legend</h3>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #3498db;"></div>
+                        <div class="legend-text">Mathematics</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #8e44ad;"></div>
+                        <div class="legend-text">Physics</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e74c3c;"></div>
+                        <div class="legend-text">Chemistry</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #2ecc71;"></div>
+                        <div class="legend-text">Biology</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f1c40f;"></div>
+                        <div class="legend-text">English</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e67e22;"></div>
+                        <div class="legend-text">History</div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #34495e;"></div>
+                        <div class="legend-text">Geography</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Week navigation
+            const prevWeekBtn = document.getElementById('prev-week');
+            const nextWeekBtn = document.getElementById('next-week');
+            const currentWeekDisplay = document.querySelector('.current-week');
+            
+            let currentDate = new Date();
+            
+            // Update week display
+            function updateWeekDisplay() {
+                const weekStart = new Date(currentDate);
+                weekStart.setDate(currentDate.getDate() - currentDate.getDay() + 1); // Monday
+                
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekStart.getDate() + 6); // Sunday
+                
+                const options = { month: 'short', day: 'numeric' };
+                const startStr = weekStart.toLocaleDateString('en-US', options);
+                const endStr = weekEnd.toLocaleDateString('en-US', options);
+                const yearStr = weekEnd.getFullYear();
+                
+                currentWeekDisplay.textContent = `${startStr} - ${endStr}, ${yearStr}`;
+                
+                // Update day dates in the header
+                const dayDates = document.querySelectorAll('.day-date');
+                for (let i = 0; i < 7; i++) {
+                    const day = new Date(weekStart);
+                    day.setDate(weekStart.getDate() + i);
+                    dayDates[i].textContent = day.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+                }
+            }
+            
+            prevWeekBtn.addEventListener('click', function() {
+                currentDate.setDate(currentDate.getDate() - 7);
+                updateWeekDisplay();
+            });
+            
+            nextWeekBtn.addEventListener('click', function() {
+                currentDate.setDate(currentDate.getDate() + 7);
+                updateWeekDisplay();
+            });
+            
+            // Initialize week display
+            updateWeekDisplay();
+            
+            // Add logout functionality to logout links
+            const logoutLinks = document.querySelectorAll('a[href="index.html"]');
+            logoutLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Clear user data from localStorage
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('userTokens');
+                    // Redirect to index.html
+                    window.location.href = 'index.html';
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Courses - Paratpar AI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Courses page specific styles */
+        .courses-container {
+            padding: 20px;
+        }
+        
+        .course-filters {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 30px;
+            background: #f0f0f0;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .filter-tab.active {
+            background: var(--gradient-yellow);
+            font-weight: 600;
+        }
+        
+        .search-course {
+            position: relative;
+            width: 300px;
+        }
+        
+        .search-course input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border-radius: 30px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+        }
+        
+        .search-course button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--light-text);
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .course-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .course-image {
+            height: 160px;
+            overflow: hidden;
+        }
+        
+        .course-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .course-card:hover .course-image img {
+            transform: scale(1.1);
+        }
+        
+        .course-content {
+            padding: 20px;
+        }
+        
+        .course-subject {
+            display: inline-block;
+            padding: 5px 10px;
+            background: rgba(255, 215, 0, 0.1);
+            color: var(--accent-color);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .course-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .course-progress {
+            margin: 15px 0;
+        }
+        
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-yellow);
+            border-radius: 10px;
+        }
+        
+        .course-stats {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+            margin-top: 15px;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+        
+        .stat-item i {
+            margin-right: 5px;
+            color: var(--accent-color);
+        }
+        
+        .course-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .continue-btn {
+            flex: 3;
+            padding: 10px;
+            background: var(--gradient-yellow);
+            color: var(--text-color);
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        
+        .bookmark-btn {
+            flex: 1;
+            padding: 10px;
+            background: #f0f0f0;
+            color: var(--text-color);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .continue-btn:hover,
+        .bookmark-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .completed-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--accent-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .enrolled-courses,
+        .recommended-courses {
+            margin-bottom: 40px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-header h3 {
+            margin: 0;
+        }
+        
+        .view-all {
+            color: var(--accent-color);
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .view-all:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .course-filters {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .search-course {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="https://via.placeholder.com/50" alt="User" class="user-avatar">
+            <div class="user-info">
+                <h3 id="sidebar-username">Guest User</h3>
+                <p>Student</p>
+            </div>
+            <button class="close-sidebar" id="close-sidebar">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li>
+                    <a href="home.html">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="courses.html">
+                        <i class="fas fa-book"></i>
+                        <span>My Courses</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="assignments.html">
+                        <i class="fas fa-tasks"></i>
+                        <span>Assignments</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="timetable.html">
+                        <i class="fas fa-calendar"></i>
+                        <span>Timetable</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="rewards.html">
+                        <i class="fas fa-gift"></i>
+                        <span>Reward Mart</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="settings.html">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.html">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dashboard-content">
+        <!-- Top Navigation -->
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <button class="hamburger-btn" id="hamburger-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2>My Courses</h2>
+            </div>
+            <div class="nav-right">
+                <div class="token-widget" id="token-widget">
+                    <i class="fas fa-coins"></i>
+                    <span id="token-count">120</span>
+                    <div class="token-tooltip">
+                        Click to visit Reward Mart
+                    </div>
+                </div>
+                <div class="profile-dropdown">
+                    <button class="profile-btn" id="profile-btn">
+                        <img src="https://via.placeholder.com/40" alt="Profile">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="profile-dropdown">
+                        <ul>
+                            <li><a href="#profile"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><a href="#settings"><i class="fas fa-cog"></i> Settings</a></li>
+                            <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Courses Container -->
+        <div class="courses-container">
+            <!-- Filters -->
+            <div class="course-filters">
+                <div class="filter-tabs">
+                    <div class="filter-tab active">All Courses</div>
+                    <div class="filter-tab">In Progress</div>
+                    <div class="filter-tab">Completed</div>
+                    <div class="filter-tab">Bookmarked</div>
+                </div>
+                
+                <div class="search-course">
+                    <input type="text" placeholder="Search courses...">
+                    <button type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            
+            <!-- Enrolled Courses Section -->
+            <div class="enrolled-courses">
+                <div class="section-header">
+                    <h3>Enrolled Courses</h3>
+                    <span class="view-all">View All</span>
+                </div>
+                
+                <div class="courses-grid">
+                    <!-- Course Card 1 -->
+                    <div class="course-card">
+                        <div class="course-image">
+                            <img src="https://via.placeholder.com/300x160?text=Mathematics" alt="Mathematics">
+                        </div>
+                        <div class="course-content">
+                            <span class="course-subject">Mathematics</span>
+                            <h3 class="course-title">Fundamentals of Algebra & Calculus</h3>
+                            
+                            <div class="course-progress">
+                                <div class="progress-info">
+                                    <span>Progress</span>
+                                    <span>78%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 78%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="course-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-book"></i>
+                                    <span>15 Lessons</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>30 Hours</span>
+                                </div>
+                            </div>
+                            
+                            <div class="course-actions">
+                                <a href="#" class="continue-btn">Continue</a>
+                                <button class="bookmark-btn"><i class="fas fa-bookmark"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Course Card 2 -->
+                    <div class="course-card">
+                        <div class="course-image">
+                            <img src="https://via.placeholder.com/300x160?text=Physics" alt="Physics">
+                        </div>
+                        <div class="course-content">
+                            <span class="course-subject">Physics</span>
+                            <h3 class="course-title">Mechanics & Thermodynamics</h3>
+                            
+                            <div class="course-progress">
+                                <div class="progress-info">
+                                    <span>Progress</span>
+                                    <span>45%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 45%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="course-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-book"></i>
+                                    <span>12 Lessons</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>24 Hours</span>
+                                </div>
+                            </div>
+                            
+                            <div class="course-actions">
+                                <a href="#" class="continue-btn">Continue</a>
+                                <button class="bookmark-btn"><i class="fas fa-bookmark"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Course Card 3 -->
+                    <div class="course-card">
+                        <div class="completed-badge">Completed</div>
+                        <div class="course-image">
+                            <img src="https://via.placeholder.com/300x160?text=English" alt="English">
+                        </div>
+                        <div class="course-content">
+                            <span class="course-subject">English</span>
+                            <h3 class="course-title">Grammar & Creative Writing</h3>
+                            
+                            <div class="course-progress">
+                                <div class="progress-info">
+                                    <span>Progress</span>
+                                    <span>100%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="course-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-book"></i>
+                                    <span>10 Lessons</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>18 Hours</span>
+                                </div>
+                            </div>
+                            
+                            <div class="course-actions">
+                                <a href="#" class="continue-btn">Review</a>
+                                <button class="bookmark-btn"><i class="fas fa-bookmark"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recommended Courses Section -->
+            <div class="recommended-courses">
+                <div class="section-header">
+                    <h3>Recommended For You</h3>
+                    <span class="view-all">View All</span>
+                </div>
+                
+                <div class="courses-grid">
+                    <!-- Course Card 4 -->
+                    <div class="course-card">
+                        <div class="course-image">
+                            <img src="https://via.placeholder.com/300x160?text=Chemistry" alt="Chemistry">
+                        </div>
+                        <div class="course-content">
+                            <span class="course-subject">Chemistry</span>
+                            <h3 class="course-title">Organic Chemistry Foundations</h3>
+                            
+                            <div class="course-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-book"></i>
+                                    <span>14 Lessons</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>26 Hours</span>
+                                </div>
+                            </div>
+                            
+                            <div class="course-actions">
+                                <a href="#" class="continue-btn">Enroll Now</a>
+                                <button class="bookmark-btn"><i class="far fa-bookmark"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Course Card 5 -->
+                    <div class="course-card">
+                        <div class="course-image">
+                            <img src="https://via.placeholder.com/300x160?text=Biology" alt="Biology">
+                        </div>
+                        <div class="course-content">
+                            <span class="course-subject">Biology</span>
+                            <h3 class="course-title">Human Anatomy & Physiology</h3>
+                            
+                            <div class="course-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-book"></i>
+                                    <span>16 Lessons</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>32 Hours</span>
+                                </div>
+                            </div>
+                            
+                            <div class="course-actions">
+                                <a href="#" class="continue-btn">Enroll Now</a>
+                                <button class="bookmark-btn"><i class="far fa-bookmark"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Course Card 6 -->
+                    <div class="course-card">
+                        <div class="course-image">
+                            <img src="https://via.placeholder.com/300x160?text=Computer+Science" alt="Computer Science">
+                        </div>
+                        <div class="course-content">
+                            <span class="course-subject">Computer Science</span>
+                            <h3 class="course-title">Introduction to Programming</h3>
+                            
+                            <div class="course-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-book"></i>
+                                    <span>20 Lessons</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>40 Hours</span>
+                                </div>
+                            </div>
+                            
+                            <div class="course-actions">
+                                <a href="#" class="continue-btn">Enroll Now</a>
+                                <button class="bookmark-btn"><i class="far fa-bookmark"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Settings Modal -->
+    <div class="modal" id="profile-settings-modal">
+        <div class="modal-content profile-settings-content">
+            <span class="close-modal">&times;</span>
+            <h2>Account Settings</h2>
+            <div class="settings-container">
+                <div class="settings-sidebar">
+                    <ul>
+                        <li class="active" data-tab="personal-info">Personal Information</li>
+                        <li data-tab="account-settings">Account Settings</li>
+                        <li data-tab="notification-settings">Notifications</li>
+                        <li data-tab="privacy-settings">Privacy</li>
+                    </ul>
+                </div>
+                <div class="settings-content">
+                    <div class="settings-tab active" id="personal-info">
+                        <!-- Personal Info Content -->
+                    </div>
+                    <div class="settings-tab" id="account-settings">
+                        <!-- Account Settings Content -->
+                    </div>
+                    <div class="settings-tab" id="notification-settings">
+                        <!-- Notification Settings Content -->
+                    </div>
+                    <div class="settings-tab" id="privacy-settings">
+                        <!-- Privacy Settings Content -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter tabs functionality
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // In a real app, you would filter the courses based on the selected tab
+                });
+            });
+            
+            // Bookmark functionality
+            const bookmarkButtons = document.querySelectorAll('.bookmark-btn');
+            
+            bookmarkButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    
+                    if (icon.classList.contains('far')) {
+                        // Not bookmarked, add bookmark
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                    } else {
+                        // Bookmarked, remove bookmark
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reward Mart - Paratpar AI</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Rewards page specific styles */
+        .token-display {
+            padding: 20px;
+        }
+        
+        .token-card {
+            background: var(--gradient-yellow);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .token-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .token-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .token-icon i {
+            font-size: 40px;
+            color: var(--text-color);
+        }
+        
+        .token-amount h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+        }
+        
+        .token-count {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        
+        .token-quote {
+            flex: 1;
+            min-width: 300px;
+            font-style: italic;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 20px;
+            border-left: 3px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .token-quote blockquote {
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+        
+        .quote-author {
+            text-align: right;
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .reward-filters {
+            padding: 20px;
+        }
+        
+        .filter-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .search-bar {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border-radius: 30px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+        }
+        
+        .search-bar button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--light-text);
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        .sort-options, .filter-options {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sort-options select,
+        .filter-options select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+        }
+        
+        .rewards-listing {
+            padding: 20px;
+        }
+        
+        .rewards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .reward-item {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .reward-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .reward-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--accent-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 5;
+        }
+        
+        .reward-image {
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .reward-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .reward-item:hover .reward-image img {
+            transform: scale(1.1);
+        }
+        
+        .reward-details {
+            padding: 20px;
+        }
+        
+        .reward-details h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+        }
+        
+        .reward-description {
+            color: var(--light-text);
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .reward-price {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .price-tokens {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+        }
+        
+        .reward-price i {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+        }
+        
+        .reward-btn {
+            width: 100%;
+            padding: 10px;
+            background: var(--gradient-yellow);
+            color: var(--text-color);
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .reward-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .redemption-history {
+            padding: 20px;
+        }
+        
+        .redemption-history h3 {
+            margin-bottom: 20px;
+        }
+        
+        .history-list {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+        
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-details h4 {
+            margin: 0 0 5px 0;
+        }
+        
+        .history-details p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-badge.delivered {
+            background: #e6f7e6;
+            color: #2db92d;
+        }
+        
+        .status-badge.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-badge.expired {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        /* Redemption Modal */
+        .redemption-content {
+            max-width: 700px;
+        }
+        
+        .redemption-details {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .redemption-image {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .redemption-image img {
+            width: 100%;
+            height: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .redemption-info {
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        .redemption-info h3 {
+            margin-top: 0;
+        }
+        
+        .redemption-cost {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: var(--border-radius);
+        }
+        
+        .redemption-cost p {
+            margin: 5px 0;
+            font-size: 1.1rem;
+        }
+        
+        .redemption-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        #confirm-redemption.disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .cancel-btn {
+            padding: 12px 24px;
+            background: #f0f0f0;
+            color: var(--text-color);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .cancel-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        @media (max-width: 768px) {
+            .token-card {
+                flex-direction: column;
+            }
+            
+            .token-quote {
+                border-left: none;
+                border-top: 3px solid rgba(0, 0, 0, 0.1);
+                padding-left: 0;
+                padding-top: 20px;
+            }
+            
+            .filter-container {
+                flex-direction: column;
+            }
+            
+            .redemption-details {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="https://via.placeholder.com/50" alt="User" class="user-avatar">
+            <div class="user-info">
+                <h3 id="sidebar-username">Guest User</h3>
+                <p>Student</p>
+            </div>
+            <button class="close-sidebar" id="close-sidebar">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li>
+                    <a href="home.html">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="courses.html">
+                        <i class="fas fa-book"></i>
+                        <span>My Courses</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="assignments.html">
+                        <i class="fas fa-tasks"></i>
+                        <span>Assignments</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="timetable.html">
+                        <i class="fas fa-calendar"></i>
+                        <span>Timetable</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="rewards.html">
+                        <i class="fas fa-gift"></i>
+                        <span>Reward Mart</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="settings.html">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="index.html">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dashboard-content">
+        <!-- Top Navigation -->
+        <nav class="dashboard-nav">
+            <div class="nav-left">
+                <button class="hamburger-btn" id="hamburger-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2>Reward Mart</h2>
+            </div>
+            <div class="nav-right">
+                <div class="token-widget" id="token-widget">
+                    <i class="fas fa-coins"></i>
+                    <span id="token-count">120</span>
+                </div>
+                <div class="profile-dropdown">
+                    <button class="profile-btn" id="profile-btn">
+                        <img src="https://via.placeholder.com/40" alt="Profile">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="dropdown-menu" id="profile-dropdown">
+                        <ul>
+                            <li><a href="settings.html"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+                            <li><a href="index.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Token Display Section -->
+        <section class="token-display">
+            <div class="token-card">
+                <div class="token-info">
+                    <div class="token-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="token-amount">
+                        <h3>Your Tokens</h3>
+                        <div class="token-count">120</div>
+                    </div>
+                </div>
+                <div class="token-quote">
+                    <blockquote id="motivational-quote">"Success is not final, failure is not fatal: It is the courage to continue that counts."</blockquote>
+                    <p class="quote-author">- Winston Churchill</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filters and Sorting -->
+        <section class="reward-filters">
+            <div class="filter-container">
+                <div class="search-bar">
+                    <input type="text" placeholder="Search rewards" id="search-rewards">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="sort-options">
+                    <label for="sort-type">Sort by:</label>
+                    <select id="sort-type">
+                        <option value="newest">Newest</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="alphabetical">A-Z</option>
+                    </select>
+                </div>
+                <div class="filter-options">
+                    <label for="filter-type">Filter:</label>
+                    <select id="filter-type">
+                        <option value="all">All Rewards</option>
+                        <option value="affordable">Affordable (Within My Tokens)</option>
+                        <option value="vouchers">Vouchers</option>
+                        <option value="coupons">Coupons</option>
+                        <option value="digital">Digital Goods</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rewards Listing -->
+        <section class="rewards-listing">
+            <div class="rewards-grid">
+                <!-- Reward Item 1 -->
+                <div class="reward-item" data-price="50" data-category="vouchers">
+                    <div class="reward-badge">Most Popular</div>
+                    <div class="reward-image">
+                        <img src="https://via.placeholder.com/300x200?text=Amazon+Voucher" alt="Amazon Voucher">
+                    </div>
+                    <div class="reward-details">
+                        <h3>$5 Amazon Gift Card</h3>
+                        <p class="reward-description">Use this voucher to purchase anything on Amazon.</p>
+                        <div class="reward-price">
+                            <span class="price-tokens">50</span>
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <button class="reward-btn">Redeem Now</button>
+                    </div>
+                </div>
+
+                <!-- Reward Item 2 -->
+                <div class="reward-item" data-price="30" data-category="coupons">
+                    <div class="reward-image">
+                        <img src="https://via.placeholder.com/300x200?text=Food+Coupon" alt="Food Coupon">
+                    </div>
+                    <div class="reward-details">
+                        <h3>15% Off Food Delivery</h3>
+                        <p class="reward-description">Get 15% off your next food delivery order.</p>
+                        <div class="reward-price">
+                            <span class="price-tokens">30</span>
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <button class="reward-btn">Redeem Now</button>
+                    </div>
+                </div>
+
+                <!-- Reward Item 3 -->
+                <div class="reward-item" data-price="20" data-category="digital">
+                    <div class="reward-badge">New</div>
+                    <div class="reward-image">
+                        <img src="https://via.placeholder.com/300x200?text=Premium+Study+Materials" alt="Premium Study Materials">
+                    </div>
+                    <div class="reward-details">
+                        <h3>Premium Study Materials</h3>
+                        <p class="reward-description">Access premium study materials for 1 month.</p>
+                        <div class="reward-price">
+                            <span class="price-tokens">20</span>
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <button class="reward-btn">Redeem Now</button>
+                    </div>
+                </div>
+
+                <!-- Reward Item 4 -->
+                <div class="reward-item" data-price="100" data-category="vouchers">
+                    <div class="reward-image">
+                        <img src="https://via.placeholder.com/300x200?text=Netflix+Subscription" alt="Netflix Subscription">
+                    </div>
+                    <div class="reward-details">
+                        <h3>1 Month Netflix Subscription</h3>
+                        <p class="reward-description">Get a 1-month subscription to Netflix Basic plan.</p>
+                        <div class="reward-price">
+                            <span class="price-tokens">100</span>
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <button class="reward-btn">Redeem Now</button>
+                    </div>
+                </div>
+
+                <!-- Reward Item 5 -->
+                <div class="reward-item" data-price="40" data-category="coupons">
+                    <div class="reward-image">
+                        <img src="https://via.placeholder.com/300x200?text=Bookstore+Discount" alt="Bookstore Discount">
+                    </div>
+                    <div class="reward-details">
+                        <h3>20% Off at Bookstore</h3>
+                        <p class="reward-description">Get 20% off your purchase at participating bookstores.</p>
+                        <div class="reward-price">
+                            <span class="price-tokens">40</span>
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <button class="reward-btn">Redeem Now</button>
+                    </div>
+                </div>
+
+                <!-- Reward Item 6 -->
+                <div class="reward-item" data-price="150" data-category="digital">
+                    <div class="reward-badge">Premium</div>
+                    <div class="reward-image">
+                        <img src="https://via.placeholder.com/300x200?text=Online+Course+Access" alt="Online Course Access">
+                    </div>
+                    <div class="reward-details">
+                        <h3>Online Course Access</h3>
+                        <p class="reward-description">Full access to a premium online course of your choice.</p>
+                        <div class="reward-price">
+                            <span class="price-tokens">150</span>
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <button class="reward-btn">Redeem Now</button>
+                    </div>
+                </div>
+
+                <!-- Reward Item 7 -->
+                <div class="reward-item" data-price="25" data-category="vouchers">
+                    <div class="reward-image">
+                        <img src="https://via.placeholder.com/300x200?text=Music+Streaming" alt="Music Streaming">
+                    </div>
+                    <div class="reward-details">
+                        <h3>1 Month Music Streaming</h3>
+                        <p class="reward-description">Get a 1-month premium subscription to a music streaming service.</p>
+                        <div class="reward-price">
+                            <span class="price-tokens">25</span>
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <button class="reward-btn">Redeem Now</button>
+                    </div>
+                </div>
+
+                <!-- Reward Item 8 -->
+                <div class="reward-item" data-price="75" data-category="coupons">
+                    <div class="reward-image">
+                        <img src="https://via.placeholder.com/300x200?text=Movie+Tickets" alt="Movie Tickets">
+                    </div>
+                    <div class="reward-details">
+                        <h3>Movie Ticket Discount</h3>
+                        <p class="reward-description">Buy one movie ticket, get one free at participating theaters.</p>
+                        <div class="reward-price">
+                            <span class="price-tokens">75</span>
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <button class="reward-btn">Redeem Now</button>
+                    </div>
+                </div>
+
+                <!-- Reward Item 9 -->
+                <div class="reward-item" data-price="15" data-category="digital">
+                    <div class="reward-badge">Limited Time</div>
+                    <div class="reward-image">
+                        <img src="https://via.placeholder.com/300x200?text=Custom+Avatar" alt="Custom Avatar">
+                    </div>
+                    <div class="reward-details">
+                        <h3>Custom Profile Avatar</h3>
+                        <p class="reward-description">Unlock premium avatars for your profile.</p>
+                        <div class="reward-price">
+                            <span class="price-tokens">15</span>
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <button class="reward-btn">Redeem Now</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Redemption History -->
+        <section class="redemption-history">
+            <h3>Redemption History</h3>
+            <div class="history-list">
+                <div class="history-item">
+                    <div class="history-details">
+                        <h4>$5 Amazon Gift Card</h4>
+                        <p>Redeemed on: <span>May 15, 2023</span></p>
+                    </div>
+                    <div class="history-status">
+                        <span class="status-badge delivered">Delivered</span>
+                    </div>
+                </div>
+                <div class="history-item">
+                    <div class="history-details">
+                        <h4>Premium Study Materials</h4>
+                        <p>Redeemed on: <span>April 28, 2023</span></p>
+                    </div>
+                    <div class="history-status">
+                        <span class="status-badge delivered">Delivered</span>
+                    </div>
+                </div>
+                <div class="history-item">
+                    <div class="history-details">
+                        <h4>15% Off Food Delivery</h4>
+                        <p>Redeemed on: <span>April 10, 2023</span></p>
+                    </div>
+                    <div class="history-status">
+                        <span class="status-badge expired">Expired</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Reward Redemption Modal -->
+    <div class="modal" id="redemption-modal">
+        <div class="modal-content redemption-content">
+            <span class="close-modal">&times;</span>
+            <h2>Redeem Reward</h2>
+            <div class="redemption-details">
+                <div class="redemption-image">
+                    <img id="redemption-img" src="https://via.placeholder.com/300x200" alt="Reward">
+                </div>
+                <div class="redemption-info">
+                    <h3 id="redemption-title">Reward Title</h3>
+                    <p id="redemption-description">Reward description will appear here.</p>
+                    <div class="redemption-cost">
+                        <p>Cost: <span id="redemption-cost">0</span> <i class="fas fa-coins"></i></p>
+                        <p>Your Balance: <span id="redemption-balance">0</span> <i class="fas fa-coins"></i></p>
+                    </div>
+                    <div class="redemption-actions">
+                        <button id="confirm-redemption" class="cta-button">Confirm Redemption</button>
+                        <button id="cancel-redemption" class="cancel-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+    <script src="rewards.js"></script>
+</body>
+</html> 

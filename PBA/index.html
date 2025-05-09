@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paratpar AI - Student Learning Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Ensure quiz elements display correctly */
+        .hidden {
+            display: none !important;
+        }
+        
+        .option-item {
+            list-style: none;
+            padding: 12px 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-item:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        
+        .option-item.selected {
+            background: rgba(255, 215, 0, 0.2);
+            border-left: 3px solid #ffbe0b;
+            font-weight: 600;
+        }
+        
+        .quiz-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .nav-btn, .submit-btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .submit-btn {
+            background: var(--gradient-yellow);
+            color: var(--text-color);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .question-meta {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <h1>Paratpar AI</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#quiz">Take Quiz</a></li>
+                <li><a href="#about">About</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <button class="login-btn" onclick="location.href='login.html'">Login</button>
+                <button class="signup-btn" onclick="location.href='login.html'">Sign Up</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <h1>Learn Without Distractions</h1>
+                <p>Personalized learning platform with AI-driven study plans and achievement rewards</p>
+                <button class="cta-button" id="start-quiz-btn" onclick="startQuiz()">Take Entrance Exam</button>
+            </div>
+            <div class="hero-image">
+                <img src="https://cdn.pixabay.com/photo/2018/01/18/20/42/pencil-3091204_1280.jpg" alt="Students learning">
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <h2>Our Features</h2>
+            <div class="feature-cards">
+                <div class="feature-card">
+                    <i class="fas fa-brain"></i>
+                    <h3>AI-Driven Learning</h3>
+                    <p>Our AI monitors your progress and adapts your study plan for optimal learning</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Distraction-Free</h3>
+                    <p>Focus on what matters with our distraction-blocking technology</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-award"></i>
+                    <h3>Reward System</h3>
+                    <p>Earn digital tokens for completing tasks and exchange them for real rewards</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Progress Tracking</h3>
+                    <p>Track your improvement with detailed analytics and insights</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="quiz" class="quiz-section">
+            <h2>Assessment Test</h2>
+            <p>Take our 15-question assessment to help us create your personalized learning plan</p>
+            
+            <div class="quiz-container">
+                <div id="quiz-start" class="quiz-start">
+                    <h3>Ready to begin?</h3>
+                    <p>This test consists of 15 questions from your class curriculum. You have 45 minutes to complete it.</p>
+                    <div class="class-selector">
+                        <label for="class-select">Select Your Class:</label>
+                        <select id="class-select">
+                            <option value="class_9">Class 9</option>
+                            <option value="class_10">Class 10</option>
+                            <option value="class_11">Class 11</option>
+                            <option value="class_12">Class 12</option>
+                        </select>
+                    </div>
+                    <button id="begin-quiz-btn" class="cta-button">Begin Test</button>
+                </div>
+
+                <div id="quiz-questions" class="quiz-questions hidden">
+                    <div class="quiz-header">
+                        <div id="timer" class="timer">
+                            <i class="fas fa-clock"></i>
+                            <span id="time-remaining">45:00</span>
+                        </div>
+                        <div class="progress">
+                            <span id="current-question">1</span>/
+                            <span id="total-questions">15</span>
+                        </div>
+                    </div>
+
+                    <div id="question-container" class="question-container">
+                        <!-- Questions will be populated here -->
+                    </div>
+
+                    <div class="quiz-nav">
+                        <button id="prev-question" class="nav-btn" disabled>Previous</button>
+                        <button id="next-question" class="nav-btn">Next</button>
+                        <button id="submit-quiz" class="submit-btn hidden">Submit Quiz</button>
+                    </div>
+                </div>
+
+                <div id="quiz-results" class="quiz-results hidden">
+                    <h3>Quiz Results</h3>
+                    <div class="score-display">
+                        <div class="score-circle">
+                            <span id="score-percentage">0%</span>
+                        </div>
+                        <p>You scored <span id="correct-answers">0</span> out of <span id="total-questions-result">15</span></p>
+                    </div>
+                    <div class="token-award">
+                        <p>You've earned <span id="tokens-earned">0</span> tokens!</p>
+                    </div>
+                    <button id="view-plan-btn" class="cta-button">View Your Study Plan</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <h2>About Paratpar AI</h2>
+            <p>Paratpar AI is an innovative educational platform designed to help students learn effectively without distractions. Our AI-powered system adapts to each student's learning style and provides personalized study plans.</p>
+            <p>By completing tasks and assessments, students earn digital tokens which can be redeemed for vouchers, coupons, and other rewards, making learning both effective and engaging.</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h3>Paratpar AI</h3>
+                <p>Empowering education through technology</p>
+            </div>
+            <div class="footer-links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#quiz">Take Quiz</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>Contact Us</h4>
+                <p><i class="fas fa-envelope"></i> info@paratparai.com</p>
+                <p><i class="fas fa-phone"></i> +1 (123) 456-7890</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 Paratpar AI. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        function startQuiz() {
+            // Check if user is logged in
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                // User is logged in, scroll to quiz section
+                document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                // User is not logged in, redirect to login page
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Standalone quiz implementation for the landing page
+        document.addEventListener('DOMContentLoaded', function() {
+            const beginQuizBtn = document.getElementById('begin-quiz-btn');
+            const quizStartSection = document.getElementById('quiz-start');
+            const quizQuestionsSection = document.getElementById('quiz-questions');
+            const quizResultsSection = document.getElementById('quiz-results');
+            const classSelect = document.getElementById('class-select');
+            const questionContainer = document.getElementById('question-container');
+            const currentQuestionSpan = document.getElementById('current-question');
+            const totalQuestionsSpan = document.getElementById('total-questions');
+            const totalQuestionsResultSpan = document.getElementById('total-questions-result');
+            const timeRemainingSpan = document.getElementById('time-remaining');
+            const prevQuestionBtn = document.getElementById('prev-question');
+            const nextQuestionBtn = document.getElementById('next-question');
+            const submitQuizBtn = document.getElementById('submit-quiz');
+            const scorePercentageSpan = document.getElementById('score-percentage');
+            const correctAnswersSpan = document.getElementById('correct-answers');
+            const tokensEarnedSpan = document.getElementById('tokens-earned');
+            
+            const API_URL = 'http://localhost:8000';
+            
+            let quizData = null;
+            let currentQuestionIndex = 0;
+            let userAnswers = {};
+            let timerInterval = null;
+            let remainingSeconds = 2700; // 45 minutes in seconds
+            
+            if (beginQuizBtn) {
+                beginQuizBtn.addEventListener('click', startLandingPageQuiz);
+            }
+            
+            if (prevQuestionBtn) {
+                prevQuestionBtn.addEventListener('click', navigateToPrevQuestion);
+            }
+            
+            if (nextQuestionBtn) {
+                nextQuestionBtn.addEventListener('click', navigateToNextQuestion);
+            }
+            
+            if (submitQuizBtn) {
+                submitQuizBtn.addEventListener('click', submitQuiz);
+            }
+            
+            // Add event delegation for quiz option selection
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('option-item') || e.target.closest('.option-item')) {
+                    const optionItem = e.target.classList.contains('option-item') ? e.target : e.target.closest('.option-item');
+                    const questionIndex = parseInt(optionItem.dataset.questionIndex);
+                    const option = optionItem.dataset.option;
+                    selectOption(questionIndex, option);
+                }
+            });
+            
+            async function startLandingPageQuiz() {
+                console.log('Starting landing page quiz');
+                
+                if (beginQuizBtn) {
+                    beginQuizBtn.disabled = true;
+                    beginQuizBtn.textContent = 'Loading AI Questions...';
+                }
+                
+                try {
+                    const selectedClass = classSelect.value;
+                    
+                    // Try to fetch AI-generated questions from the API
+                    try {
+                        const response = await fetch(`${API_URL}/quiz/ai-generated?class_name=${selectedClass}&num_questions=15`, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'application/json',
+                            },
+                            // Timeout after 30 seconds to give AI time to generate
+                            signal: AbortSignal.timeout(30000)
+                        });
+                        
+                        if (response.ok) {
+                            quizData = await response.json();
+                            console.log('Successfully fetched AI-generated quiz data');
+                        } else {
+                            // If API returns error, fall back to demo mode
+                            console.error('API returned an error, falling back to demo mode');
+                            throw new Error('API returned an error');
+                        }
+                    } catch (apiError) {
+                        console.error('API connection failed:', apiError);
+                        console.log('Falling back to demo mode');
+                        
+                        // Use the demo quiz instead
+                        loadDemoQuiz();
+                        return;
+                    }
+                    
+                    // Update UI with quiz data
+                    if (totalQuestionsSpan) totalQuestionsSpan.textContent = quizData.questions.length;
+                    if (totalQuestionsResultSpan) totalQuestionsResultSpan.textContent = quizData.questions.length;
+                    
+                    // Hide start screen, show questions
+                    if (quizStartSection) quizStartSection.classList.add('hidden');
+                    if (quizQuestionsSection) quizQuestionsSection.classList.remove('hidden');
+                    
+                    // Start the timer
+                    startTimer();
+                    
+                    // Load the first question
+                    loadQuestion(0);
+                } catch (error) {
+                    console.error('Error starting quiz:', error);
+                    alert('Failed to load quiz. Switching to demo mode.');
+                    
+                    // Use the demo quiz instead
+                    loadDemoQuiz();
+                }
+            }
+            
+            function loadDemoQuiz() {
+                console.log('Loading demo quiz for landing page');
+                
+                // Sample quiz data with questions
+                quizData = {
+                    session_id: 'demo_session',
+                    questions: [
+                        {
+                            question: "Which state of matter has a definite shape and volume?",
+                            options: ["Solid", "Liquid", "Gas", "Plasma"],
+                            answer: "Solid",
+                            subject: "Science",
+                            chapter: "Matter in Our Surroundings",
+                            difficulty: "easy"
+                        },
+                        {
+                            question: "What is the value of π (pi) up to two decimal places?",
+                            options: ["3.14", "3.15", "3.16", "3.17"],
+                            answer: "3.14",
+                            subject: "Mathematics",
+                            chapter: "Number Systems",
+                            difficulty: "medium"
+                        },
+                        {
+                            question: "In which year did the French Revolution begin?",
+                            options: ["1789", "1776", "1804", "1799"],
+                            answer: "1789",
+                            subject: "Social Science",
+                            chapter: "The French Revolution",
+                            difficulty: "easy"
+                        },
+                        {
+                            question: "What is the process of conversion of a solid directly into gas called?",
+                            options: ["Evaporation", "Condensation", "Sublimation", "Melting"],
+                            answer: "Sublimation",
+                            subject: "Science",
+                            chapter: "Matter in Our Surroundings",
+                            difficulty: "medium"
+                        },
+                        {
+                            question: "Which of the following is an irrational number?",
+                            options: ["2", "4", "√2", "1"],
+                            answer: "√2",
+                            subject: "Mathematics",
+                            chapter: "Number Systems",
+                            difficulty: "easy"
+                        }
+                    ],
+                    start_time: Date.now() / 1000
+                };
+                
+                // Set questions count
+                if (totalQuestionsSpan) totalQuestionsSpan.textContent = quizData.questions.length;
+                if (totalQuestionsResultSpan) totalQuestionsResultSpan.textContent = quizData.questions.length;
+                
+                // Hide start screen, show questions
+                if (quizStartSection) quizStartSection.classList.add('hidden');
+                if (quizQuestionsSection) quizQuestionsSection.classList.remove('hidden');
+                
+                // Start the timer
+                startTimer();
+                
+                // Load the first question
+                loadQuestion(0);
+                
+                // Reset the begin quiz button
+                if (beginQuizBtn) {
+                    beginQuizBtn.disabled = false;
+                    beginQuizBtn.textContent = 'Begin Test';
+                }
+            }
+            
+            function loadQuestion(index) {
+                if (!quizData || !quizData.questions || quizData.questions.length === 0) {
+                    console.error('No quiz data available');
+                    return;
+                }
+                
+                // Update current question index
+                currentQuestionIndex = index;
+                if (currentQuestionSpan) currentQuestionSpan.textContent = currentQuestionIndex + 1;
+                
+                // Get the current question
+                const question = quizData.questions[index];
+                
+                // Create the question HTML
+                if (questionContainer) {
+                    questionContainer.innerHTML = `
+                        <div class="question">
+                            <h3>${question.question}</h3>
+                            <p class="question-meta">Subject: ${question.subject} | Chapter: ${question.chapter} | Difficulty: ${question.difficulty}</p>
+                            <ul class="options">
+                                ${question.options.map((option, optionIndex) => `
+                                    <li 
+                                        class="option-item ${userAnswers[index] === option ? 'selected' : ''}" 
+                                        data-option="${option}"
+                                        data-question-index="${index}"
+                                    >
+                                        ${String.fromCharCode(65 + optionIndex)}. ${option}
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+                
+                // Update navigation buttons
+                if (prevQuestionBtn) prevQuestionBtn.disabled = index === 0;
+                if (nextQuestionBtn) nextQuestionBtn.disabled = index === quizData.questions.length - 1;
+                
+                // Show submit button on the last question
+                if (submitQuizBtn) {
+                    if (index === quizData.questions.length - 1) {
+                        submitQuizBtn.classList.remove('hidden');
+                    } else {
+                        submitQuizBtn.classList.add('hidden');
+                    }
+                }
+            }
+            
+            function selectOption(questionIndex, option) {
+                // Store the user's answer
+                userAnswers[questionIndex] = option;
+                
+                // Update the UI to show the selected option
+                const optionItems = document.querySelectorAll('.option-item');
+                optionItems.forEach(item => {
+                    if (item.dataset.questionIndex === questionIndex.toString() && item.dataset.option === option) {
+                        item.classList.add('selected');
+                    } else if (item.dataset.questionIndex === questionIndex.toString()) {
+                        item.classList.remove('selected');
+                    }
+                });
+            }
+            
+            function navigateToPrevQuestion() {
+                if (currentQuestionIndex > 0) {
+                    loadQuestion(currentQuestionIndex - 1);
+                }
+            }
+            
+            function navigateToNextQuestion() {
+                if (currentQuestionIndex < quizData.questions.length - 1) {
+                    loadQuestion(currentQuestionIndex + 1);
+                }
+            }
+            
+            function startTimer() {
+                // Start with 45 minutes (2700 seconds)
+                remainingSeconds = 2700;
+                updateTimerDisplay();
+                
+                // Update timer every second
+                timerInterval = setInterval(() => {
+                    remainingSeconds--;
+                    updateTimerDisplay();
+                    
+                    // Auto-submit when time runs out
+                    if (remainingSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        submitQuiz();
+                    }
+                }, 1000);
+            }
+            
+            function updateTimerDisplay() {
+                if (!timeRemainingSpan) return;
+                
+                const minutes = Math.floor(remainingSeconds / 60);
+                const seconds = remainingSeconds % 60;
+                timeRemainingSpan.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // Add warning color when less than 5 minutes left
+                if (remainingSeconds < 300) {
+                    timeRemainingSpan.style.color = '#ff0000';
+                }
+            }
+            
+            function submitQuiz() {
+                if (!quizData) {
+                    console.error('No quiz data to submit');
+                    return;
+                }
+                
+                // Stop the timer
+                if (timerInterval) clearInterval(timerInterval);
+                
+                // Calculate results locally
+                let correctCount = 0;
+                
+                // Compare user answers with correct answers
+                Object.keys(userAnswers).forEach(index => {
+                    if (userAnswers[index] === quizData.questions[index].answer) {
+                        correctCount++;
+                    }
+                });
+                
+                const result = {
+                    score: correctCount,
+                    total: quizData.questions.length,
+                    percentage: (correctCount / quizData.questions.length) * 100
+                };
+                
+                // Update the results UI
+                if (scorePercentageSpan) scorePercentageSpan.textContent = `${Math.round(result.percentage)}%`;
+                if (correctAnswersSpan) correctAnswersSpan.textContent = result.score;
+                
+                // Calculate tokens based on score (10 tokens per correct answer)
+                const tokens = result.score * 10;
+                if (tokensEarnedSpan) tokensEarnedSpan.textContent = tokens;
+                
+                // Show the results section
+                if (quizQuestionsSection) quizQuestionsSection.classList.add('hidden');
+                if (quizResultsSection) quizResultsSection.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html> 
